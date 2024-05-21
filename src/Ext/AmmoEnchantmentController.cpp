@@ -52,7 +52,11 @@ namespace Ext
 					adjustNode->local.translate.y = 1.0f;
 					adjustNode->local.scale = 0.4f;
 
-					RE::TaskQueueInterface::GetSingleton()->Attach3D(adjustNode, quiver);
+					auto quiverNode = static_cast<RE::NiNode*>(quiver);
+					RE::TaskQueueInterface::GetSingleton()->QueueNodeAttach(
+						adjustNode,
+						quiverNode);
+
 
 					attachRoot.reset(adjustNode);
 					hasAdjustNode = true;

@@ -39,7 +39,7 @@ namespace Data
 
 			RE::BGSExplosion* createdExplosion;
 			try {
-				createdExplosion = createdExplosions.at(entry.enchantment);
+				createdExplosion = createdExplosions.at(entry.magicItem);
 			}
 			catch (std::out_of_range&) {
 				logger::error("Failed to look up created explosion"sv);
@@ -47,11 +47,11 @@ namespace Data
 			}
 
 			if (!a_intfc->WriteRecordData(static_cast<std::uint32_t>(entry.refCount))) {
-				logger::error("Failed to write refCount ({})"sv, entry.enchantment->formID);
+				logger::error("Failed to write refCount ({})"sv, entry.magicItem->formID);
 				return false;
 			}
 
-			if (!SaveEnchantment(entry.enchantment, a_intfc)) {
+			if (!SaveEnchantment(entry.magicItem, a_intfc)) {
 				logger::error("Failed to save enchantment"sv);
 				return false;
 			}
@@ -151,7 +151,7 @@ namespace Data
 			if (explosionForm) {
 				explosion = explosionForm->As<RE::BGSExplosion>();
 				if (!explosion) {
-					RE::BGSSaveLoadGame::GetSingleton()->ClearForm(explosionForm);
+					RE::EXBGSSaveLoadGame::GetSingleton()->ClearForm(explosionForm);
 				}
 			}
 			if (!explosion) {
@@ -167,7 +167,7 @@ namespace Data
 				explosion = EnchantExplosion(baseExplosion, enchantment, explosionFormID);
 			}
 
-			entry.enchantment = enchantment;
+			entry.magicItem = enchantment;
 
 			ammoEnchantments.push_back(std::move(entry));
 			createdExplosions.insert({ enchantment, explosion });
@@ -189,7 +189,7 @@ namespace Data
 	}
 
 	bool CreatedObjectManager::SaveEnchantment(
-		const RE::EnchantmentItem* a_enchantment,
+		const RE::MagicItem* a_enchantment,
 		SKSE::SerializationInterface* a_intfc)
 	{
 		if (!a_intfc->WriteRecordData(a_enchantment->formID)) {
@@ -327,7 +327,7 @@ namespace Data
 		if (const auto enchantmentForm = RE::TESForm::LookupByID(formID)) {
 			a_enchantment = enchantmentForm->As<RE::EnchantmentItem>();
 			if (!a_enchantment) {
-				RE::BGSSaveLoadGame::GetSingleton()->ClearForm(enchantmentForm);
+				RE::EXBGSSaveLoadGame::GetSingleton()->ClearForm(enchantmentForm);
 			}
 		}
 		if (!a_enchantment) {

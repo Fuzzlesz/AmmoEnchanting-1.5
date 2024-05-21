@@ -1,11 +1,13 @@
 #pragma once
 
+#include "RE/B/BGSSaveLoadGame.h"
+
 namespace RE
 {
-	class BGSSaveLoadGame
+	class EXBGSSaveLoadGame : public BGSSaveLoadGame
 	{
 	public:
-		static BGSSaveLoadGame* GetSingleton();
+		static EXBGSSaveLoadGame* GetSingleton();
 
 		void ClearForm(TESForm* a_form);
 

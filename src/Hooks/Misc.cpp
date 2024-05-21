@@ -47,7 +47,7 @@ namespace Hooks
 	void Misc::GoldValuePatch()
 	{
 		static const auto hook = REL::Relocation<std::uintptr_t>(
-			RE::Offset::InventoryEntryData::GetValue,
+			RE::Offset::InventoryEntryData::GetEnchantment,
 			0x11D);
 
 		if (!REL::make_pattern<"48 8B D7 49 8B CE">().match(hook.address())) {

@@ -49,8 +49,8 @@ namespace Hooks
 		static auto Character_vtbl =
 			REL::Relocation<std::uintptr_t>(RE::Offset::Character::Vtbl);
 
-		static auto PlayerCharacter_vtbl =
-			REL::Relocation<std::uintptr_t>(RE::Offset::PlayerCharacter::Vtbl);
+		static auto PlayerCharacter_vtbl = REL::Relocation<std::uintptr_t>(
+			RE::VTABLE_PlayerCharacter[0]);
 
 		_Character_AttachArrow =
 			Character_vtbl.write_vfunc(205, &VFX::Character_AttachArrow);
@@ -84,8 +84,8 @@ namespace Hooks
 
 	void VFX::InitWornPatch()
 	{
-		static auto PlayerCharacter_vtbl =
-			REL::Relocation<std::uintptr_t>(RE::Offset::PlayerCharacter::Vtbl);
+		static auto PlayerCharacter_vtbl = REL::Relocation<std::uintptr_t>(
+			RE::VTABLE_PlayerCharacter[0]);
 
 		_InitWornObjects = PlayerCharacter_vtbl.write_vfunc(106, &VFX::InitWornObjects);
 	}

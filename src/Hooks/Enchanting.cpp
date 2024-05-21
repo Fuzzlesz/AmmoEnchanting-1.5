@@ -212,12 +212,12 @@ namespace Hooks
 
 		case RE::FormType::Armor:
 			_creatingCount = 1;
-			return RE::BGSCreatedObjectManager::GetSingleton()->CreateArmorEnchantment(
+			return RE::BGSCreatedObjectManager::GetSingleton()->AddArmorEnchantment(
 				a_menu->createEffectFunctor.createdEffects);
 
 		case RE::FormType::Weapon:
 			_creatingCount = 1;
-			return RE::BGSCreatedObjectManager::GetSingleton()->CreateWeaponEnchantment(
+			return RE::BGSCreatedObjectManager::GetSingleton()->AddWeaponEnchantment(
 				a_menu->createEffectFunctor.createdEffects);
 
 		case RE::FormType::Ammo:
