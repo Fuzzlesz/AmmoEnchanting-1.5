@@ -10,7 +10,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 list(APPEND CMAKE_IGNORE_PATH "${PROJECT_BINARY_DIR}")
 list(APPEND CMAKE_MODULE_PATH
-	"${PROJECT_SOURCE_DIR}/tools/SKSE-CMakeModules/Modules"
+	"${PROJECT_SOURCE_DIR}/tools/Modules"
 )
 
 include(SKSEPlugin)

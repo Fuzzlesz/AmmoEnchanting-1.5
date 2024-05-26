@@ -1,1 +1,0 @@
-$AMEN_NotEnoughArrows{}{}	Enchantment charges: {}. You only have {} of the selected item.
