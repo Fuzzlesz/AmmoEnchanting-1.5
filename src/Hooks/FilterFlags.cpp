@@ -29,13 +29,13 @@ namespace Hooks
 		ItemPreviewPatch();
 	}
 
-	void FilterFlags::ConstructorPatch()
+void FilterFlags::ConstructorPatch()
 	{
 		static const auto hook = REL::Relocation<std::uintptr_t>(
 			RE::Offset::CraftingSubMenus::EnchantConstructMenu::Ctor,
-			0x1B3);
+			0x16E);
 
-		if (!REL::make_pattern<"4D 8D A6">().match(hook.address())) {
+		if (!REL::make_pattern<"4C 8D BE">().match(hook.address())) {
 			util::report_and_fail("FilterFlags::ConstructorPatch failed to install"sv);
 		}
 
@@ -43,12 +43,12 @@ namespace Hooks
 		{
 			Patch()
 			{
-				lea(r12, ptr[r14 + offsetof(Menu, filterDisenchant)]);
-				mov(dword[r12], FilterFlag::Disenchant);
-				mov(ptr[r14 + offsetof(Menu, filterDivider)], esi);
-				mov(dword[r14 + offsetof(Menu, filterItem)], FilterFlag::Item);
-				mov(dword[r14 + offsetof(Menu, filterEnchantment)], FilterFlag::Enchantment);
-				mov(dword[r14 + offsetof(Menu, filterSoulGem)], FilterFlag::SoulGem);
+				lea(r13, ptr[r15 + offsetof(Menu, filterDisenchant)]);																
+				mov(dword[r13], FilterFlag::Disenchant);
+				mov(ptr[r15 + offsetof(Menu, filterDivider)], edi);
+				mov(dword[r15 + offsetof(Menu, filterItem)], FilterFlag::Item);
+				mov(dword[r15 + offsetof(Menu, filterEnchantment)], FilterFlag::Enchantment);
+				mov(dword[r15 + offsetof(Menu, filterSoulGem)], FilterFlag::SoulGem);
 			}
 		};
 
@@ -64,8 +64,8 @@ namespace Hooks
 	{
 		// Hook after the IsQuestObject call to play nice with Essential Favorites
 		static const auto hook = REL::Relocation<std::uintptr_t>(
-			RE::Offset::CraftingSubMenus::EnchantConstructMenu::PopulateEntryList,
-			0x14D);
+			RE::Offset::CraftingSubMenus::EnchantConstructMenu::Filter,
+			0x140);
 
 		if (!REL::make_pattern<"48 8B CB">().match(hook.address())) {
 			util::report_and_fail("FilterFlags::ItemEntryPatch failed to install"sv);
@@ -77,13 +77,13 @@ namespace Hooks
 			{
 				Xbyak::Label skip;
 
-				mov(rcx, rsi);
+				mov(rcx, rdi);
 				mov(rax, util::function_ptr(&FilterFlags::GetFilterFlag));
 				call(rax);
 				test(eax, eax);
 				jz(skip);
 
-				mov(edi, eax);
+				mov(ebx, eax);
 
 				jmp(ptr[rip]);
 				dq(hook.address() + 0xD0);
@@ -107,7 +107,7 @@ namespace Hooks
 	{
 		static const auto hook = REL::Relocation<std::uintptr_t>(
 			RE::Offset::CraftingSubMenus::EnchantConstructMenu::AddEnchantmentIfKnown,
-			0x243);
+			0x130);
 
 		if (!REL::make_pattern<"E8">().match(hook.address())) {
 			util::report_and_fail("FilterFlags::EffectEntryPatch failed to install"sv);
@@ -121,9 +121,9 @@ namespace Hooks
 	{
 		static const auto hook = REL::Relocation<std::uintptr_t>(
 			RE::Offset::CraftingSubMenus::EnchantConstructMenu::SelectEntry,
-			0x6E);
+			0x67);
 
-		if (!REL::make_pattern<"F6 41 ?? 0A">().match(hook.address())) {
+		if (!REL::make_pattern<"F6 40 ?? 0A">().match(hook.address())) {
 			util::report_and_fail("FilterFlags::DisenchantSelectPatch failed to install"sv);
 		}
 
@@ -137,9 +137,9 @@ namespace Hooks
 	{
 		static const auto hook = REL::Relocation<std::uintptr_t>(
 			RE::Offset::CraftingSubMenus::EnchantConstructMenu::UpdateEnabledEntries,
-			0x4E);
+			0x4B);
 
-		if (!REL::make_pattern<"F6 C1 0A">().match(hook.address())) {
+		if (!REL::make_pattern<"F6 40 0C 0A">().match(hook.address())) {
 			util::report_and_fail("FilterFlags::DisenchantEnablePatch failed to install"sv);
 		}
 
@@ -155,7 +155,7 @@ namespace Hooks
 			RE::Offset::CraftingSubMenus::EnchantConstructMenu::DisenchantItem,
 			0x41);
 
-		if (!REL::make_pattern<"F6 41 ?? 0A">().match(hook.address())) {
+		if (!REL::make_pattern<"F6 40 ?? 0A">().match(hook.address())) {
 			util::report_and_fail("FilterFlags::DisenchantLearnPatch failed to install"sv);
 		}
 
@@ -206,32 +206,32 @@ namespace Hooks
 	{
 		static const auto hook1 = REL::Relocation<std::uintptr_t>(
 			RE::Offset::CraftingSubMenus::EnchantConstructMenu::Selections::SelectEntry,
-			0x42);
+			0x36);
 
 		static const auto hook2 = REL::Relocation<std::uintptr_t>(
 			RE::Offset::CraftingSubMenus::EnchantConstructMenu::Selections::SelectEntry,
-			0x27F);
+			0x1AC);
 
-		if (!REL::make_pattern<"41 83 E8 01">().match(hook1.address()) ||
-			!REL::make_pattern<"48 8B 16">().match(hook2.address())) {
+		if (!REL::make_pattern<"83 E9 01">().match(hook1.address()) ||
+			!REL::make_pattern<"48 8B 17">().match(hook2.address())) {
 
 			util::report_and_fail("FilterFlags::SelectEntryPatch failed to install"sv);
 		}
 
-		struct Patch1 : Xbyak::CodeGenerator
+	struct Patch1 : Xbyak::CodeGenerator
 		{
 			Patch1()
 			{
-				// mov r8d, r11d
-				test(r8d, FilterFlag::Item);
+				// mov ecx, r11d
+				test(ecx, FilterFlag::Item);
 				db(0x0F);  // jnz hook + 0x1E7
 				db(0x85);
 				dd(0x1DA);
-				test(r8d, FilterFlag::Enchantment);
+				test(ecx, FilterFlag::Enchantment);
 				db(0x0F);  // jnz hook + 0x66
 				db(0x85);
 				dd(0x4C);
-				cmp(r8d, FilterFlag::SoulGem);
+				cmp(ecx, FilterFlag::SoulGem);
 				db(0x0F);  // jnz hook + 0x1E7
 				db(0x85);
 				dd(0x1C3);
@@ -244,7 +244,7 @@ namespace Hooks
 
 		assert(patch1.getSize() == 0x2A);
 
-		struct Patch2 : Xbyak::CodeGenerator
+	struct Patch2 : Xbyak::CodeGenerator
 		{
 			Patch2()
 			{
@@ -254,10 +254,10 @@ namespace Hooks
 				// func+0x27F (after selecting an enchantment)
 				nop(0x20);
 				// func+0x29F (after selecting an item)
-				mov(rcx, rsi);
+				mov(rcx, rdi);
 				mov(rax, util::function_ptr(&FilterFlags::GetEnabledFilters));
 				call(rax);
-				mov(edi, eax);
+				mov(ebx, eax);
 				nop(0x3A);
 				// func+0x2EA (selecting null, early return)
 			}
@@ -276,7 +276,7 @@ namespace Hooks
 	{
 		static const auto hook = REL::Relocation<std::uintptr_t>(
 			RE::Offset::CraftingSubMenus::EnchantConstructMenu::CreateEffectFunctor::Invoke,
-			0x14F);
+			0x157);
 
 		if (!REL::make_pattern<"83 F9 10">().match(hook.address())) {
 			util::report_and_fail("FilterFlags::ComputeMagnitudePatch failed to install"sv);
@@ -306,12 +306,12 @@ namespace Hooks
 	{
 		static const auto hook1 = REL::Relocation<std::uintptr_t>(
 			RE::Offset::CraftingSubMenus::EnchantConstructMenu::SelectEntry,
-			0x2A6);
+			0x29E);
 
 		// there seems to be some redundant code here, possibly an inlined function call
 		static const auto hook2 = REL::Relocation<std::uintptr_t>(
 			RE::Offset::CraftingSubMenus::EnchantConstructMenu::SelectEntry,
-			0x380);
+			0x37C);
 
 		static const auto hook3 = REL::Relocation<std::uintptr_t>(
 			RE::Offset::CraftingSubMenus::EnchantConstructMenu::SliderClose,
@@ -373,7 +373,7 @@ namespace Hooks
 	{
 		static const auto hook = REL::Relocation<std::uintptr_t>(
 			RE::Offset::CraftingSubMenus::EnchantConstructMenu::Update,
-			0xAF);
+			0xAE);
 
 		if (!REL::make_pattern<"48 8B 86">().match(hook.address())) {
 			util::report_and_fail("FilterFlags::ItemPreviewPatch failed to install"sv);
@@ -389,7 +389,7 @@ namespace Hooks
 				mov(ecx, dword[rcx + offsetof(Menu::CategoryListEntry, filterFlag)]);
 				mov(rax, util::function_ptr(&FilterFlags::GetFormTypeFromEffectFlag));
 				call(rax);
-				mov(r14d, eax);
+				mov(r15d, eax);
 			}
 		};
 

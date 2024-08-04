@@ -16,7 +16,7 @@ namespace Hooks
 	{
 		static const auto hook = REL::Relocation<std::uintptr_t>(
 			RE::Offset::CraftingMenu::ProcessMessage,
-			0x3E8);
+			0x3E7);
 
 		if (!REL::make_pattern<"E8">().match(hook.address())) {
 			logger::error("SkyUI::FilterFlagPatch failed to install"sv);
@@ -33,9 +33,9 @@ namespace Hooks
 	{
 		static const auto hook = REL::Relocation<std::uintptr_t>(
 			RE::Offset::CraftingSubMenus::EnchantConstructMenu::PopulateEntryList,
-			0x4A6);
+			0xDF);
 
-		if (!REL::make_pattern<"4C 8D 45 D7 48 8B 56 78">().match(hook.address())) {
+		if (!REL::make_pattern<"4C 8D 44 24 38 48 8B 56 78">().match(hook.address())) {
 			logger::error("SkyUI::ItemDataPatch failed to install"sv);
 			return;
 		}
@@ -54,14 +54,14 @@ namespace Hooks
 				mov(rdx, ptr[rsi + offsetof(Menu, entryList) + 0x10]);  // entryList._value
 
 				jmp(ptr[rip]);
-				dq(hook.address() + 0x8);
+				dq(hook.address() + 0x9);
 			}
 		};
 
 		Patch patch{};
 		patch.ready();
 
-		REL::safe_fill(hook.address(), REL::NOP, 0x8);
+		REL::safe_fill(hook.address(), REL::NOP, 0x9);
 
 		auto& trampoline = SKSE::GetTrampoline();
 		trampoline.write_branch<6>(hook.address(), trampoline.allocate(patch));

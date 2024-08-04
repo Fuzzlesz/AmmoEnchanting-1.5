@@ -26,20 +26,20 @@ namespace Hooks
 	{
 		static const auto hook1 = REL::Relocation<std::uintptr_t>(
 			RE::Offset::CraftingSubMenus::EnchantConstructMenu::Update,
-			0x208);
+			0x2A5);
 
 		static const auto hook2 = REL::Relocation<std::uintptr_t>(
 			RE::Offset::CraftingSubMenus::EnchantConstructMenu::Update,
-			0x299);
+			0x2C0);
 
-		if (!REL::make_pattern<"41 83 FE 29">().match(hook1.address()) ||
-			!REL::make_pattern<"41 83 FE 1A">().match(hook2.address())) {
+		if (!REL::make_pattern<"41 83 FF 29">().match(hook1.address()) ||
+			!REL::make_pattern<"41 83 FF 1A">().match(hook2.address())) {
 
 			util::report_and_fail("Enchanting::ItemPreviewPatch failed to install"sv);
 		}
 
-		// jmp from 0x208 to 0x299
-		std::array<std::uint8_t, 5> patch1{ 0xE9, 0x8C, 0x00, 0x00, 0x00 };
+		// jmp from 0x2A5 to 0x2C0
+		std::array<std::uint8_t, 5> patch1{ 0xE9, 0x16, 0x00, 0x00, 0x00 };
 
 		struct Patch : Xbyak::CodeGenerator
 		{
@@ -48,7 +48,7 @@ namespace Hooks
 				Xbyak::Label retn;
 
 				mov(rdx, rsi);
-				mov(ecx, r14d);
+				mov(ecx, r15d);
 				mov(rax, util::function_ptr(&Enchanting::CreateEnchantment));
 				call(rax);
 				test(rax, rax);
@@ -77,7 +77,7 @@ namespace Hooks
 	{
 		static const auto hook = REL::Relocation<std::uintptr_t>(
 			RE::Offset::CraftingSubMenus::EnchantConstructMenu::CraftItem,
-			0x98);
+			0x9D);
 
 		if (!REL::make_pattern<"8B 43">().match(hook.address())) {
 			util::report_and_fail("Enchanting::CraftItemPatch failed to install"sv);
@@ -109,7 +109,7 @@ namespace Hooks
 	{
 		static const auto hook = REL::Relocation<std::uintptr_t>(
 			RE::Offset::CraftingSubMenus::EnchantConstructMenu::CraftItem,
-			0x17C);
+			0x17E);
 
 		if (!REL::make_pattern<"E8">().match(hook.address())) {
 			util::report_and_fail("Enchanting::EnchantArtPatch failed to install"sv);
@@ -123,7 +123,7 @@ namespace Hooks
 	{
 		static const auto hook = REL::Relocation<std::uintptr_t>(
 			RE::Offset::CraftingSubMenus::EnchantConstructMenu::ProcessUserEvent,
-			0x1B6);
+			0x194);
 
 		if (!REL::make_pattern<"E8">().match(hook.address())) {
 			logger::error("Enchanting::EnchantConfirmPatch failed to install"sv);
@@ -146,7 +146,7 @@ namespace Hooks
 
 		static const auto hook3 = REL::Relocation<std::uintptr_t>(
 			RE::Offset::InventoryChanges::EnchantObject,
-			0x14F);
+			0x15B);
 
 		if (!REL::make_pattern<"E8">().match(hook1.address()) ||
 			!REL::make_pattern<"E8">().match(hook2.address()) ||
@@ -168,7 +168,7 @@ namespace Hooks
 	{
 		static const auto hook = REL::Relocation<std::uintptr_t>(
 			RE::Offset::CraftingSubMenus::EnchantConstructMenu::CraftItem,
-			0x2A3);
+			0x2A5);
 
 		if (!REL::make_pattern<"E8">().match(hook.address())) {
 			logger::error("Enchanting::InventoryNotificationPatch failed to install"sv);
@@ -186,7 +186,7 @@ namespace Hooks
 	{
 		static const auto hook = REL::Relocation<std::uintptr_t>(
 			RE::Offset::CraftingSubMenus::EnchantConstructMenu::Update,
-			0x174);
+			0x202);
 
 		if (!REL::make_pattern<"E8">().match(hook.address())) {
 			util::report_and_fail("Enchanting::EnchantmentChargePatch failed to install"sv);

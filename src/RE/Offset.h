@@ -51,7 +51,8 @@ namespace RE::Offset
 			inline constexpr REL::ID CanSelectEntry{ 50569 };           // 140874A40
 			inline constexpr REL::ID CraftItem{ 50450 };                // 14086C640
 			inline constexpr REL::ID DisenchantItem{ 50459 };           // 14086D830
-			inline constexpr REL::ID PopulateEntryList{ 50454 };        // 14086D0A0
+			inline constexpr REL::ID Filter{ 50454 };			        // 14086D0A0
+			inline constexpr REL::ID PopulateEntryList{ 50311 };        // 140864C50
 			inline constexpr REL::ID ProcessUserEvent{ 50487 };         // 14086EE80
 			inline constexpr REL::ID SelectEntry{ 50440 };              // 14086B200
 			inline constexpr REL::ID SliderClose{ 50550 };              // 140872E00
@@ -77,7 +78,7 @@ namespace RE::Offset
 
 	namespace ExtraDataList
 	{
-		inline constexpr REL::ID LoadGame{ 11956 };						// 140129A40
+		inline constexpr REL::ID LoadGame{ 11981 };						// 14012DCD0
 	}
 
 	namespace InventoryChanges
@@ -87,7 +88,7 @@ namespace RE::Offset
 
 	namespace InventoryEntryData
 	{
-		inline constexpr REL::ID GetEnchantment{ 15788 };				// 1401D7F10
+		inline constexpr REL::ID GetEnchantment{ 15757 };				// 1401D66E0
 	}
 
 	namespace ItemCard

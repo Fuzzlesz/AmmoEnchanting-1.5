@@ -20,7 +20,7 @@ namespace Hooks
 	{
 		static const auto hook = REL::Relocation<std::uintptr_t>(
 			RE::Offset::ActorEquipManager::EquipObject,
-			0x170);
+			0xE5);
 
 		if (!REL::make_pattern<"E8">().match(hook.address())) {
 			util::report_and_fail("VFX::EquipAmmoPatch failed to install"sv);
@@ -34,7 +34,7 @@ namespace Hooks
 	{
 		static const auto hook = REL::Relocation<std::uintptr_t>(
 			RE::Offset::ActorEquipManager::UnequipObject,
-			0x1B9);
+			0x138);
 
 		if (!REL::make_pattern<"E8">().match(hook.address())) {
 			util::report_and_fail("VFX::UnequipAmmoPatch failed to install"sv);

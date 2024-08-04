@@ -48,7 +48,7 @@ namespace Hooks
 	{
 		static const auto hook = REL::Relocation<std::uintptr_t>(
 			RE::Offset::InventoryEntryData::GetEnchantment,
-			0x11D);
+			0x11E);
 
 		if (!REL::make_pattern<"48 8B D7 49 8B CE">().match(hook.address())) {
 			util::report_and_fail("Misc::GoldValuePatch failed to install"sv);
@@ -80,9 +80,9 @@ namespace Hooks
 	{
 		static const auto hook = REL::Relocation<std::uintptr_t>(
 			RE::Offset::ExtraDataList::LoadGame,
-			0x1E2D);
+			0x1F);
 
-		if (!REL::make_pattern<"8B 4D 90">().match(hook.address())) {
+		if (!REL::make_pattern<"8B 4C 24 48">().match(hook.address())) {
 			util::report_and_fail("Misc::LoadGamePatch failed to install"sv);
 		}
 

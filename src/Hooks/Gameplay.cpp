@@ -21,7 +21,7 @@ namespace Hooks
 	{
 		static const auto hook = REL::Relocation<std::uintptr_t>(
 			RE::Offset::Projectile::Launch,
-			0x6FF);
+			0x737);
 
 		if (!REL::make_pattern<"48 83 7F">().match(hook.address())) {
 			util::report_and_fail("Gameplay::LaunchProjectilePatch failed to install"sv);
@@ -50,7 +50,7 @@ namespace Hooks
 	{
 		static const auto hook = REL::Relocation<std::uintptr_t>(
 			RE::Offset::Actor::AddWornItem,
-			0x36A);
+			0x36C);
 
 		if (!REL::make_pattern<"E8">().match(hook.address())) {
 			util::report_and_fail("Gameplay::EquipAmmoPatch failed to install"sv);
@@ -81,7 +81,7 @@ namespace Hooks
 	{
 		static const auto hook = REL::Relocation<std::uintptr_t>(
 			RE::Offset::Actor::AutoEquipNewAmmo,
-			0x122);
+			0x11F);
 
 		if (!REL::make_pattern<"E8">().match(hook.address())) {
 			util::report_and_fail("Gameplay::AutoEquipAmmoPatch failed to install"sv);
@@ -196,7 +196,7 @@ namespace Hooks
 		return explosion;
 	}
 
-	void Gameplay::AddMessage(
+void Gameplay::AddMessage(
 		RE::UIMessageQueue* a_queue,
 		const RE::BSFixedString& a_menuName,
 		RE::UI_MESSAGE_TYPE a_type,
@@ -213,8 +213,9 @@ namespace Hooks
 			return _AddMessage(a_queue, a_menuName, a_type, a_data);
 		}
 
-		std::int32_t delta = a_data->data - bothHands->countDelta;
-		a_data->data = static_cast<std::uint32_t>(extraList->GetCount() + delta);
+		std::int32_t delta = a_data->discovery.underlying() - bothHands->countDelta;
+		a_data->discovery = static_cast<RE::HUDData::Discovery>(
+			static_cast<std::uint32_t>(extraList->GetCount() + delta));
 
 		return _AddMessage(a_queue, a_menuName, a_type, a_data);
 	}
